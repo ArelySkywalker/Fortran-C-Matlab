@@ -1,0 +1,36 @@
+# An advanced makefile for the differentiation demo example
+# Here we use the macros FC, FFLAGS, F90FLAGS and general rules for compiling 
+# .f90 and .f files
+# We also use the Macro OBJECTS to not have to keep track of the 
+# object files in more than one place.
+# The PHONY target clean has also been added
+
+FC = gfortran
+LD = gfortran
+LDFLAGS = 
+FFLAGS = -O3
+F90FLAGS = -O3
+
+OBJECTS = differentiate_v3.o weights.o lglnodes.o
+.PHONY: clean
+
+run_it: diff.x
+	./diff.x   
+
+# Compile, run, process and open.
+graph_it: diff.x
+	./diff.x > out.txt
+	nohup matlab -nojvm -nosplash -nodisplay < plot_err3.m > output.txt
+	open -a preview error_v3.eps
+
+diff.x: $(OBJECTS)
+	$(LD) $(OBJECTS) -o diff.x
+
+%.o : %.f90
+	$(FC) $(F90FLAGS) -c $<
+
+%.o : %.f
+	$(FC) $(FFLAGS) -c $<
+
+clean:
+	rm -f $(OBJECTS) diff.x *.eps out.txt output.txt

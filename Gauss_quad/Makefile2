@@ -1,0 +1,20 @@
+# A simple makefile for the differentiation demo example
+
+run_it: diff.x
+	./diff.x   
+
+# Compile, run, process and open.
+graph_it: diff.x
+	./diff.x > out.txt
+	nohup matlab -nosplash -nodisplay < plot_err2.m > output.txt
+	open -a preview error_v2.eps
+
+diff.x: differentiate_v2.o weights.o
+	gfortran differentiate_v2.o weights.o -o diff.x
+
+differentiate_v2.o: differentiate_v2.f90 
+	gfortran -c differentiate_v2.f90
+
+weights.o: weights.f 
+	gfortran -c weights.f
+

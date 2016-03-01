@@ -1,0 +1,26 @@
+# A slightly more advanced makefile for the differentiation demo example
+# Here we use the macros FC, FFLAGS, F90FLAGS and general rules for compiling 
+# .f90 and .f files
+# 
+
+FC = gfortran
+FFLAGS = -O3
+F90FLAGS = -O3
+
+run_it: diff.x
+	./diff.x   
+
+# Compile, run, process and open.
+graph_it: diff.x
+	./diff.x > out.txt
+	nohup matlab -nosplash -nodisplay < plot_err3.m > output.txt
+	open -a preview error_v3.eps
+
+diff.x: differentiate_v3.o weights.o lglnodes.o
+	gfortran differentiate_v3.o weights.o lglnodes.o -o diff.x
+
+%.o : %.f90
+	$(FC) $(F90FLAGS) -c $<
+
+%.o : %.f
+	$(FC) $(FFLAGS) -c $<
